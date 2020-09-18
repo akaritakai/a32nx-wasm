@@ -41,7 +41,6 @@ typedef enum aSimVars {
     ENG1_N2,                //"ENG N2 RPM:1","percent"
     ENG2_N2,                //"ENG N2 RPM:2","percent"
     APU_SWITCH,             //"A:APU SWITCH", "Bool"
-    APU_START,              //"K:APU_STARTER", "Number"
     BATT1_SW,               //A:ELECTRICAL MASTER BATTERY:#ID#, Bool
     BATT2_SW,               //A:ELECTRICAL MASTER BATTERY:#ID#, Bool
     AMB_TEMP,               //"AMBIENT TEMPERATURE", "celsius"
@@ -91,7 +90,7 @@ typedef enum lSimVars {
     The following will be shifted out of ELEC shortly
     ***/
     APU_FLAP_OPEN,          //"L:APU_FLAP_OPEN", "Percent"
-    A32NX_APU_START,        //"L:A32NX_APU_START_ACTIVATED", "Bool"
+    APU_START,              //"L:A32NX_APU_START_ACTIVATED", "Bool"
     APU_N1,                 //"L:APU_N1","Percent"
     APU_BLEED_PRESSURE,     //"L:APU_BLEED_PRESSURE","PSI"
     APU_EGT,                //"L:APU_EGT","celcius"
@@ -216,7 +215,6 @@ extern const PCSTRINGZ pcstring_aSimVars[aSimVarsCount] = { "EXTERNAL POWER AVAI
                                                             "ENG N2 RPM:1, Percent",
                                                             "ENG N2 RPM:2, Percent",
                                                             "A:APU SWITCH, Bool",
-                                                            "K:APU_STARTER, Number",
                                                             "A:ELECTRICAL MASTER BATTERY:1 , Bool",
                                                             "A:ELECTRICAL MASTER BATTERY:2 , Bool",
                                                             "AMBIENT TEMPERATURE, celsius",
@@ -288,6 +286,7 @@ extern ENUM* ENUM_UNITS;
 extern ID* ID_LSIMVAR;
 
 extern double lastAbsTime = 0;	//last time the update function was run
+double currAbsTime = 0;
 extern FLOAT64 aSimVarsValue[aSimVarsCount];
 extern FLOAT64 lSimVarsValue[lSimVarsCount];
 extern std::vector<int> dirtylSimVars;

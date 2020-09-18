@@ -1,6 +1,73 @@
 ﻿#pragma once
 #include "common_sys.h"
 
+/*
+* =============== *
+* CLASSES DEFINED *
+* =============== *
+* ELEC MASTER CLASS
+* Batteries
+* EXTPWR
+* APU => includes start sequence
+* Engine
+* RAT => includes start sequence
+* Buses
+* Convertors
+* ==============TODO: add conditions for ovhd panel switches===============
+*/
+
+/*
+* 
+* ================= *
+* ELEC MASTER CLASS *
+* ================= *
+* 
+*/
+
+class elecSys {
+private:
+    Batteries battUnit;
+    EXTPWR gpuUnit;
+    APUGEN apuUnit;
+    Engine engUnit;
+    RAT    emerUnit;
+    Buses  busUnit;
+    Convertors convertorUnit;
+public:
+    void init() {
+        battUnit.init();
+        gpuUnit.init();
+        apuUnit.init();
+        engUnit.init();
+        emerUnit.init();
+        busUnit.init();
+        convertorUnit.init();
+    }
+    void update(const double currentAbsTime) {
+        battUnit.update(currentAbsTime);
+        gpuUnit.update(currentAbsTime);
+        apuUnit.update(currentAbsTime);
+        engUnit.update(currentAbsTime);
+        emerUnit.update(currentAbsTime);
+        busUnit.update(currentAbsTime);
+        convertorUnit.update(currentAbsTime);
+    }
+    void updateSimVars() {
+        battUnit.updateSimVars();
+        gpuUnit.updateSimVars();
+        apuUnit.updateSimVars();
+        engUnit.updateSimVars();
+        emerUnit.updateSimVars();
+        busUnit.updateSimVars();
+        convertorUnit.updateSimVars();
+    }
+};
+
+/*
+* ========= *
+* BATTERIES *
+* ========= *
+*/
 class Batteries {
 private:
     bool apu_starterOn;
@@ -103,6 +170,11 @@ public:
     }
 };
 
+/*
+* ========== *
+* EXTPWR/GPU *
+* ========== *
+*/
 class EXTPWR {
 public:
     void init() {
@@ -110,7 +182,7 @@ public:
         lSimVarsValue[EXT_GEN_AMPERAGE] = 0;
         lSimVarsValue[EXT_GEN_FREQ] = 0;
     }
-    void update() {
+    void update(const double currentAbsTime) {
         if (aSimVarsValue[EXT_POWER]) {
             lSimVarsValue[EXT_GEN_ONLINE] = 1;
             lSimVarsValue[EXT_GEN_VOLTAGE] = 114 + rand() % 1;
@@ -131,7 +203,13 @@ public:
     }
 };
 
-class APU {
+/*
+* ======= *
+* APU GEN *
+* ======= *
+* ==================TODO: separate APU start sequence into a new engine module.=======================
+*/
+class APUGEN {
 private:
     const int apu_flap_delay = 3 + rand() % 14;
     const int bleed_pressure_drop = 2 + rand() % 2;
@@ -236,15 +314,13 @@ public:
     void update(const double currentAbsTime) {
         if (aSimVarsValue[FUEL_VALUE_8]) {
             openFlap(currentAbsTime);
-            if (lSimVarsValue[APU_FLAP_OPEN] == 100 && lSimVarsValue[A32NX_APU_START]) {
-                aSimVarsValue[APU_START] = 1;
+            if (lSimVarsValue[APU_FLAP_OPEN] == 100 && lSimVarsValue[APU_START]) {
                 startup(currentAbsTime);
             }
         }
         else {
             closeFlap(currentAbsTime);
             if (lSimVarsValue[APU_FLAP_OPEN] < 100) {
-                aSimVarsValue[APU_START] = 0;
                 shutdown(currentAbsTime);
             }
         }
@@ -257,6 +333,12 @@ public:
         }
     }
 };
+
+/*
+* =========== *
+* ENGINE GENS *
+* =========== *
+*/
 
 class Engine {
 private:
@@ -353,6 +435,12 @@ public:
     }
 };
 
+/*
+* ======== *
+* EMER RAT *
+* ======== *
+* ============================TODO: separate RAT start sequence to engine module?======================
+*/
 class RAT {
 private:
     const int RATdelay = 8; //8sec
@@ -389,6 +477,11 @@ public:
     }
 };
 
+/*
+* ========== *
+* ELEC BUSES *
+* ========== *
+*/
 class Buses {
 private:
 
@@ -535,7 +628,7 @@ public:
             lSimVarsValue[i] = 0;
         }
     }
-    void update() {
+    void update(double const currentAbsTime) {
         updateACBuses();
         updateDCBuses();
     }
@@ -546,6 +639,11 @@ public:
     }
 };
 
+/*
+* ================ *
+* AC/DC CONVERTORS *
+* ================ *
+*/
 class Convertors {
 private:
     void updateTR1() {
@@ -609,14 +707,20 @@ public:
             lSimVarsValue[i] = 0;
         }
     }
-    void update() {
+    void update(const double currentAbsTime) {
         updateTR1();
         updateTR2();
         updateTRESS();
         updateSTATINV();
     }
+    void updateSimVars() {
+        for (int i = TR1_ONLINE; i <= STATICINV_FREQ; i++) {
+            set_named_variable_value(ID_LSIMVAR[i],lSimVarsValue[i]);
+        }
+    }
 };
 
+//TODO
 void updateELECConf() {
 
 }

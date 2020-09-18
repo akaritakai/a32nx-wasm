@@ -1,6 +1,8 @@
 ﻿#include "elec_sys.h"
 #include <SimConnect.h>
 
+elecSys ELEC_SYSTEM;
+
 HANDLE hSimConnect = NULL;
 class ServiceDef {
 private:
@@ -57,8 +59,7 @@ public:
         switch (service_id)
         {
         case PANEL_SERVICE_POST_INITIALIZE: {
-
-            updateLocalSimVars();
+            ELEC_SYSTEM.init();
             return true;
         }
         default:
@@ -66,11 +67,13 @@ public:
         }
     }
 
-    bool handleUpdateSimVar(FsContext ctx, int service_id, void* pData) {
+    bool handleUpdateSimVar(FsContext ctx, int service_id, void* pData, const double currentAbsTime) {
         switch (service_id)
         {
         case PANEL_SERVICE_PRE_UPDATE: {
-
+            ELEC_SYSTEM.update(currentAbsTime);
+            ELEC_SYSTEM.updateSimVars();
+            lastAbsTime = currentAbsTime;
         }
         default:
             break;
@@ -81,21 +84,34 @@ public:
         switch (service_id)
         {
         case PANEL_SERVICE_PRE_DRAW: {
-
+            sGaugeDrawData* pData_raw = static_cast<sGaugeDrawData*>(pData);
+            currAbsTime = pData_raw->t;
+            if (lastAbsTime == 0) {
+                lastAbsTime = currAbsTime;
+            }
         }
         default:
             break;
         }
     }
-};
+}service;
+
 
 // Callbacks
 extern "C" {
 
-    ServiceDef Service;
     MSFS_CALLBACK bool elec_sys_callback(FsContext ctx, int service_id, void* pData)
     {
-        
+        service.handleSimConnect(ctx, service_id, pData);
+        service.handlePostInstallInitSimVarEnumsIDs(ctx, service_id, pData);
+        service.handlePostInitSimVar(ctx, service_id, pData);
+        //lasAbsTime is unavailable for the first draw call, start updating simVars only after first draw call to avoid discrepancy
+        if(lastAbsTime){
+            service.handleUpdateSimVar(ctx, service_id, pData, currAbsTime);
+        }
+        service.handleUpdatepDataVar(ctx, service_id, pData);
+        service.handleSimDisconnect(ctx, service_id, pData);
+
     }
 
 }
