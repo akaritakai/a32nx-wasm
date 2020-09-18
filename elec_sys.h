@@ -702,7 +702,7 @@ private:
         }
     }
     void updateSTATINV() {
-        if (!(lSimVarsValue[GEN1_ONLINE] || lSimVarsValue[GEN2_ONLINE] || lSimVarsValue[EMER_ONLINE] || lSimVarsValue[APU_GEN_ONLINE]) && aSimVarsValue[TAS] > 0 && lSimVarsValue[HOT_BUS1]) {
+        if (!(lSimVarsValue[GEN1_ONLINE] && lSimVarsValue[GEN2_ONLINE] && lSimVarsValue[EMER_ONLINE] && lSimVarsValue[APU_GEN_ONLINE]) && aSimVarsValue[TAS] > 0 && lSimVarsValue[HOT_BUS1]) {
             lSimVarsValue[STATINV] = 1;
             lSimVarsValue[STATICINV_VOLTAGE] = 115;
             lSimVarsValue[STATICINV_AMPERAGE] = 70 + rand() % 5;
