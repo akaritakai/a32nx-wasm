@@ -7,9 +7,9 @@ Core systems implementation for flybywire_A32NX as wasm module.
   - Create a class instance under `wasm_sys.cpp` and init, update and updateSimVars under proper panel_service_case(wasm_gauge callback handle); 
     this will become obsolete when porting to a wasm_module, build accordingly.
     - Current implementation uses absTime to calulate _deltaTime instead of directly using deltaTime from pData structure, this is done keeping the above
-      point under consideration, since _deltaTime is bound to gauge refresh rate.(Note: currently the difference between currentAbsTime and lastAbsTime will be equal to _deltaTime)
+      point under consideration, since _deltaTime is bound to gauge refresh rate.(Note: currently the difference between currentAbsTime and lastAbsTime will be equal to            _deltaTime)
     
-- `#include "common_sys.h" in your header file. Use and update enum definition and PCSTRINGZ definition in common_sys.h as required(do not delete/change order of any existing ones)
+- `#include "common_sys.h"` in your header file. Use and update enum definition and PCSTRINGZ definition in common_sys.h as required(do not delete/change order of any existing ones)
   - In order to add new ones, first add its enum to the enum definitions and follow suit with its string at the same index as enum definition
   - Ensure to provide a comment of local var name to be used while defining its enum(yes, one may scroll down to PCSTRINGZ array and lookup,
     but this makes things easier for others to work with.
