@@ -44,7 +44,10 @@ typedef enum aSimVars {
     BATT1_SW,               //A:ELECTRICAL MASTER BATTERY:#ID#, Bool
     BATT2_SW,               //A:ELECTRICAL MASTER BATTERY:#ID#, Bool
     AMB_TEMP,               //"AMBIENT TEMPERATURE", "celsius"
+    TAS,                    //"AIRSPEED TRUE","Knots"
     IAS,                    //"AIRSPEED INDICATED","Knots"
+    GEN1_SW,                //A:GENERAL ENG MASTER ALTERNATOR:1
+    GEN2_SW,                //A:GENERAL ENG MASTER ALTERNATOR:2
     aSimVarsCount
 }aSimVars;
 
@@ -96,7 +99,6 @@ typedef enum lSimVars {
     The following will be shifted out of ELEC shortly
     ***/
     APU_FLAP_OPEN,          //"L:APU_FLAP_OPEN", "Percent"
-    APU_START,              //"L:A32NX_APU_START_ACTIVATED", "Bool"
     APU_N1,                 //"L:APU_N1","Percent"
     APU_BLEED_PRESSURE,     //"L:APU_BLEED_PRESSURE","PSI"
     APU_EGT,                //"L:APU_EGT","celcius"
@@ -165,8 +167,27 @@ typedef enum lSimVars {
     STATICINV_AMPERAGE,     //"L:STATICINV_AMPERAGE","Amperes"
     STATICINV_FREQ,         //"L:STATICINV_FREQ","Hertz"
 
-    lSimVarsCount
+    /*
+    * ========== *
+    * XML L VARS *
+    * ========== *
+    */
+    APU_START,              //L : A32NX_APU_START_ACTIVATED , "Bool"
+    IDG1_FAULT,             //L : A32NX_ELEC_IDG1_FAULT
+    IDG1_DISC_SW,           //L : A32NX_ELEC_IDG1_TOGGLE
+    IDG2_FAULT,             //L : A32NX_ELEC_IDG2_FAULT
+    IDG2_DISC_SW,           //L : A32NX_ELEC_IDG2_TOGGLE
+    BUSTIE_AUTO,            //L : A32NX_ELEC_BUSTIE_TOGGLE
+    ACESS_FEED_FAULT,       //L : A32NX_ELEC_ACESSFEED_FAULT
+    ACESS_FEED_AUTO,        //L : A32NX_ELEC_ACESSFEED_TOGGLE
+    COMMERCIAL_SW,          //L : A32NX_ELEC_COMMERCIAL_TOGGLE
+    COMMERCIAL_FAULT,       //L : A32NX_ELEC_COMMERCIAL_FAULT
+    GALLY_CAB_SW,           //L : A32NX_ELEC_GALYCAB_TOGGLE
+    GALLY_CAB_FAULT,        //L : A32NX_ELEC_GALYCAB_FAULT
+
+    totalLVarsCount
 }lSimVars;
+
 
 typedef enum powerSource{
     NOPOWER,                //0 = No Power
@@ -220,14 +241,17 @@ extern const PCSTRINGZ pcstring_aSimVars[aSimVarsCount] = { "EXTERNAL POWER AVAI
                                                             "BLEED AIR APU, Bool",
                                                             "ENG N2 RPM:1, Percent",
                                                             "ENG N2 RPM:2, Percent",
-                                                            "A:APU SWITCH, Bool",
-                                                            "A:ELECTRICAL MASTER BATTERY:1 , Bool",
-                                                            "A:ELECTRICAL MASTER BATTERY:2 , Bool",
+                                                            "APU SWITCH, Bool",
+                                                            "ELECTRICAL MASTER BATTERY:1 , Bool",
+                                                            "ELECTRICAL MASTER BATTERY:2 , Bool",
                                                             "AMBIENT TEMPERATURE, celsius",
-                                                            "AIRSPEED INDICATED,Knots"
+                                                            "AIRSPEED TRUE, Knots",
+                                                            "AIRSPEED INDICATED, Knots",
+                                                            "GENERAL ENG MASTER ALTERNATOR:1, Bool",
+                                                            "GENERAL ENG MASTER ALTERNATOR:2, Bool"
                                                         };
 
-extern const PCSTRINGZ pcstring_lSimVars[lSimVarsCount] = { "BATT1_ONLINE",
+extern const PCSTRINGZ pcstring_lSimVars[totalLVarsCount] = { "BATT1_ONLINE",
                                                             "BATT2_ONLINE",
                                                             "BATT1_CAPACITY",
                                                             "BATT2_CAPACITY",
@@ -285,7 +309,19 @@ extern const PCSTRINGZ pcstring_lSimVars[lSimVarsCount] = { "BATT1_ONLINE",
                                                             "TRESS_AMPERAGE",
                                                             "STATIC_INV",
                                                             "STATIC_INV_VOLTAGE",
-                                                            "STATIC_INV_FREQ"
+                                                            "STATIC_INV_FREQ",
+                                                            "A32NX_APU_START_ACTIVATED",
+                                                            "A32NX_ELEC_IDG1_FAULT",
+                                                            "A32NX_ELEC_IDG1_TOGGLE",
+                                                            "A32NX_ELEC_IDG2_FAULT",
+                                                            "A32NX_ELEC_IDG2_TOGGLE",
+                                                            "A32NX_ELEC_BUSTIE_TOGGLE",
+                                                            "A32NX_ELEC_ACESSFEED_FAULT",
+                                                            "A32NX_ELEC_ACESSFEED_TOGGLE",
+                                                            "A32NX_ELEC_COMMERCIAL_TOGGLE",
+                                                            "A32NX_ELEC_COMMERCIAL_FAULT",
+                                                            "A32NX_ELEC_GALYCAB_TOGGLE",
+                                                            "A32NX_ELEC_GALYCAB_FAULT"
                                                         };
 
 extern ENUM* ENUM_UNITS;
@@ -296,7 +332,7 @@ extern ENUM* keyEventID;
 extern double lastAbsTime = 0;	//last time the update function was run
 double currAbsTime = 0;
 extern FLOAT64 aSimVarsValue[aSimVarsCount];
-extern FLOAT64 lSimVarsValue[lSimVarsCount];
+extern FLOAT64 lSimVarsValue[totalLVarsCount];
 extern std::vector<int> dirtylSimVars;
 
 
@@ -308,13 +344,13 @@ void initUnitEnums() {
 }
 
 void initLocalSimVarsIDs() {
-    ID_LSIMVAR = (ID*)malloc(sizeof(ID) * lSimVarsCount);
-    for (int i = 0; i < lSimVarsCount; i++) {
+    ID_LSIMVAR = (ID*)malloc(sizeof(ID) * totalLVarsCount);
+    for (int i = 0; i < totalLVarsCount; i++) {
         ID_LSIMVAR[i] = register_named_variable(pcstring_lSimVars[i]);
     }
 }
 void updateLocalSimVars() {
-    for (int i = BATT1_ONLINE; i < lSimVarsCount; i++) {
+    for (int i = BATT1_ONLINE; i < totalLVarsCount; i++) {
         set_named_variable_value(ID_LSIMVAR[i], lSimVarsValue[i]);
     }
 }

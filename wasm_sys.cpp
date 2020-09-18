@@ -106,10 +106,7 @@ extern "C" {
         service.handleSimConnect(ctx, service_id, pData);
         service.handlePostInstallInitSimVarEnumsIDs(ctx, service_id, pData);
         service.handlePostInitSimVar(ctx, service_id, pData);
-        //lasAbsTime is unavailable for the first draw call, start updating simVars only after first draw call to avoid discrepancy
-        if(lastAbsTime){
-            service.handleUpdateSimVar(ctx, service_id, pData, currAbsTime);
-        }
+        service.handleUpdateSimVar(ctx, service_id, pData, currAbsTime);
         service.handleUpdatepDataVar(ctx, service_id, pData);
         service.handleSimDisconnect(ctx, service_id, pData);
 

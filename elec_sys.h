@@ -13,7 +13,7 @@
 * RAT => includes start sequence
 * Buses
 * Convertors
-* ==============TODO: add conditions for ovhd panel switches===============
+* 
 */
 
 /*
@@ -225,7 +225,7 @@ private:
         }
     }
     void startup(const double currentAbsTime) {
-        trigger_key_event(KEY_APU_STARTER, 1);		//activate apu starter only after full flap opening
+        trigger_key_event(KEY_APU_STARTER, 1);      //activate apu starter only after full flap opening
         if (lSimVarsValue[APU_N1] <= 12) {
             lSimVarsValue[APU_N1] += ((currentAbsTime - lastAbsTime) / 1000) * 3;
         }
@@ -356,43 +356,44 @@ private:
         else if (aSimVarsValue[ENG1_N2] <= 52 && timeElapsedGen1 > 0) {
             timeElapsedGen1 -= (currentAbsTime - lastAbsTime) / 1000;
         }
-        if (timeElapsedGen1 >= stableTime) {
+
+        if (timeElapsedGen1 >= stableTime && aSimVarsValue[GEN2_SW] && !(lSimVarsValue[IDG1_DISC_SW]) && !(lSimVarsValue[IDG1_FAULT])) {
             lSimVarsValue[GEN1_ONLINE] = 1;
             lSimVarsValue[GEN1_VOLTAGE] = 115;
             lSimVarsValue[GEN1_AMPERAGE] = 782.60;
             lSimVarsValue[GEN1_FREQ] = 400;
         }
-        if (timeElapsedGen1 <= 0) {
+        else {
             lSimVarsValue[GEN1_ONLINE] = 0;
             lSimVarsValue[GEN1_VOLTAGE] = 0;
             lSimVarsValue[GEN1_AMPERAGE] = 0;
             lSimVarsValue[GEN1_FREQ] = 0;
-            lSimVarsValue[GEN1_IDG] = ambient + 0 + rand() % 2;
         }
-        updateIDGTEMP(ENG1_N2, GEN1_IDG, ambient, currentAbsTime);
+
+        updateIDGTEMP(ENG1_N2, GEN1_IDG, IDG1_DISC_SW, ambient, currentAbsTime);
     }
     void updateGen2(const double currentAbsTime, const double ambient) {
-        if (aSimVarsValue[ENG2_N2] >= 57 && timeElapsedGen2 < stableTime) {
+        if (aSimVarsValue[ENG2_N2] >= 59.5 && timeElapsedGen2 < stableTime) {
             timeElapsedGen2 += (currentAbsTime - lastAbsTime) / 1000;
         }
-        else if (aSimVarsValue[ENG2_N2] <= 52 && timeElapsedGen1 > 0) {
+        else if (aSimVarsValue[ENG2_N2] <= 56.3 && timeElapsedGen1 > 0) {
             timeElapsedGen2 -= (currentAbsTime - lastAbsTime) / 1000;
         }
-        if (timeElapsedGen1 >= stableTime) {
+        if (timeElapsedGen1 >= stableTime && aSimVarsValue[GEN2_SW] && !(lSimVarsValue[IDG2_DISC_SW]) && !(lSimVarsValue[IDG2_FAULT])) {
             lSimVarsValue[GEN2_ONLINE] = 1;
             lSimVarsValue[GEN2_VOLTAGE] = 115;
             lSimVarsValue[GEN2_AMPERAGE] = 782.60;
             lSimVarsValue[GEN2_FREQ] = 400;
         }
-        if (timeElapsedGen1 <= 0) {
+        else {
             lSimVarsValue[GEN2_ONLINE] = 0;
             lSimVarsValue[GEN2_VOLTAGE] = 0;
             lSimVarsValue[GEN2_AMPERAGE] = 0;
             lSimVarsValue[GEN2_FREQ] = 0;
         }
-        updateIDGTEMP(ENG2_N2, GEN2_IDG, ambient, currentAbsTime);
+        updateIDGTEMP(ENG2_N2, GEN2_IDG, IDG2_DISC_SW, ambient, currentAbsTime);
     }
-    void updateIDGTEMP(ENUM ENG_N2, ENUM GEN_IDG, const double ambient, const double currentAbsTime) {
+    void updateIDGTEMP(ENUM ENG_N2, ENUM GEN_IDG, ENUM IDG_DISC, const double ambient, const double currentAbsTime) {
 
         double maxIDG = lSimVarsValue[ENG_N2] / 100 * 1.8;
         if (ambient > 0) {
@@ -406,6 +407,9 @@ private:
             if (maxIDG < 70) {
                 maxIDG = 70;
             }
+        }
+        if (lSimVarsValue[IDG_DISC]) {
+            maxIDG = ambient;
         }
         if (aSimVarsValue[ENG_N2] > 0 && aSimVarsValue[GEN_IDG] <= maxIDG) {
             lSimVarsValue[GEN_IDG] += IDGHeatingCoeff * (currentAbsTime - lastAbsTime) / 1000;
@@ -506,14 +510,16 @@ private:
         if (lSimVarsValue[GEN1_ONLINE]) {
             return GEN1;
         }
-        if (lSimVarsValue[EXT_GEN_ONLINE]) {
-            return EXT;
-        }
-        if (lSimVarsValue[APU_GEN_ONLINE]) {
-            return APU;
-        }
-        if (lSimVarsValue[GEN2_ONLINE]) {
-            return GEN2;
+        if(lSimVarsValue[BUSTIE_AUTO]){
+            if (lSimVarsValue[EXT_GEN_ONLINE]) {
+                return EXT;
+            }
+            if (lSimVarsValue[APU_GEN_ONLINE]) {
+                return APU;
+            }
+            if (lSimVarsValue[GEN2_ONLINE]) {
+                return GEN2;
+            }
         }
         return NOPOWER;
     }
@@ -521,14 +527,16 @@ private:
         if (lSimVarsValue[GEN2_ONLINE]) {
             return GEN2;
         }
-        if (lSimVarsValue[EXT_GEN_ONLINE]) {
-            return EXT;
-        }
-        if (lSimVarsValue[APU_GEN_ONLINE]) {
-            return APU;
-        }
-        if (lSimVarsValue[GEN2_ONLINE]) {
-            return GEN1;
+        if (lSimVarsValue[BUSTIE_AUTO]) {
+            if (lSimVarsValue[EXT_GEN_ONLINE]) {
+                return EXT;
+            }
+            if (lSimVarsValue[APU_GEN_ONLINE]) {
+                return APU;
+            }
+            if (lSimVarsValue[GEN2_ONLINE]) {
+                return GEN1;
+            }
         }
         return NOPOWER;
     }
@@ -536,8 +544,10 @@ private:
         if (lSimVarsValue[AC_BUS1]) {
             return lSimVarsValue[AC_BUS1];
         }
-        if (lSimVarsValue[AC_BUS2]) {
-            return lSimVarsValue[AC_BUS2];
+        if(lSimVarsValue[ACESS_FEED_AUTO]){
+            if (lSimVarsValue[AC_BUS2]) {
+                return lSimVarsValue[AC_BUS2];
+            }
         }
         if (lSimVarsValue[EMER_ONLINE]) {
             return EMER;
@@ -554,7 +564,10 @@ private:
         return NOPOWER;
     }
     ENUM updateGALLEYSHED() {
-        return lSimVarsValue[AC_SHED];
+        if(lSimVarsValue[GALLY_CAB_SW] && lSimVarsValue[COMMERCIAL_SW]){
+            return lSimVarsValue[AC_SHED];
+        }
+        return NOPOWER;
     }
     ENUM updateHOTBUS1() {
         if (lSimVarsValue[BATT1_ONLINE]) {
@@ -689,7 +702,7 @@ private:
         }
     }
     void updateSTATINV() {
-        if (!(lSimVarsValue[GEN1_ONLINE] || lSimVarsValue[GEN2_ONLINE] || lSimVarsValue[EMER_ONLINE] || lSimVarsValue[APU_GEN_ONLINE]) && lSimVarsValue[HOT_BUS1]) {
+        if (!(lSimVarsValue[GEN1_ONLINE] || lSimVarsValue[GEN2_ONLINE] || lSimVarsValue[EMER_ONLINE] || lSimVarsValue[APU_GEN_ONLINE]) && aSimVarsValue[TAS] > 0 && lSimVarsValue[HOT_BUS1]) {
             lSimVarsValue[STATINV] = 1;
             lSimVarsValue[STATICINV_VOLTAGE] = 115;
             lSimVarsValue[STATICINV_AMPERAGE] = 70 + rand() % 5;
