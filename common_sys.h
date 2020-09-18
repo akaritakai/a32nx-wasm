@@ -48,6 +48,12 @@ typedef enum aSimVars {
     aSimVarsCount
 }aSimVars;
 
+
+typedef enum keyEventTrigger {
+    APU_START,              //KEY_APU_STARTER
+    keyEventTriggerCount
+}keyEventTrigger;
+
 typedef enum lSimVars {
     /*
     * ========= *
@@ -284,6 +290,8 @@ extern const PCSTRINGZ pcstring_lSimVars[lSimVarsCount] = { "BATT1_ONLINE",
 
 extern ENUM* ENUM_UNITS;
 extern ID* ID_LSIMVAR;
+extern ENUM* keyEventID;
+
 
 extern double lastAbsTime = 0;	//last time the update function was run
 double currAbsTime = 0;

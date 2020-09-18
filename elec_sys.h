@@ -225,7 +225,7 @@ private:
         }
     }
     void startup(const double currentAbsTime) {
-        execute_calculator_code("K:APU_STARTER,Number,1", nullptr, nullptr, nullptr);		//activate apu starter only after full flap opening
+        trigger_key_event(KEY_APU_STARTER, 1);		//activate apu starter only after full flap opening
         if (lSimVarsValue[APU_N1] <= 12) {
             lSimVarsValue[APU_N1] += ((currentAbsTime - lastAbsTime) / 1000) * 3;
         }
@@ -247,6 +247,7 @@ private:
         updateEGT(true, currentAbsTime);
     }
     void shutdown(const double currentAbsTime) {
+        trigger_key_event(KEY_APU_OFF_SWITCH, 1);
         if (lSimVarsValue[APU_N1] > 0) {
             lSimVarsValue[APU_N1] -= ((currentAbsTime - lastAbsTime) / 1000) * 5;
         }

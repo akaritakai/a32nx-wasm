@@ -71,6 +71,7 @@ public:
         switch (service_id)
         {
         case PANEL_SERVICE_PRE_UPDATE: {
+            updateASimVars();
             ELEC_SYSTEM.update(currentAbsTime);
             ELEC_SYSTEM.updateSimVars();
             lastAbsTime = currentAbsTime;
