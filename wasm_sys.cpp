@@ -1,7 +1,12 @@
 ﻿#include "elec_sys.h"
+#include "packs_sys.h"
+#include "bleed_sys.h"
+#include "press_sys.h"
+
 #include <SimConnect.h>
 
 elecSys ELEC_SYSTEM;
+packsSys PACK_SYSTEM;
 
 HANDLE hSimConnect = NULL;
 class ServiceDef {
@@ -75,9 +80,10 @@ public:
             ELEC_SYSTEM.update(currentAbsTime);
             ELEC_SYSTEM.updateSimVars();
             lastAbsTime = currentAbsTime;
+            return true;
         }
         default:
-            break;
+            return true;
         }
     }
 
@@ -90,9 +96,10 @@ public:
             if (lastAbsTime == 0) {
                 lastAbsTime = currAbsTime;
             }
+            return true;
         }
         default:
-            break;
+            return true;
         }
     }
 }service;
@@ -103,13 +110,12 @@ extern "C" {
 
     MSFS_CALLBACK bool elec_sys_callback(FsContext ctx, int service_id, void* pData)
     {
-        service.handleSimConnect(ctx, service_id, pData);
-        service.handlePostInstallInitSimVarEnumsIDs(ctx, service_id, pData);
-        service.handlePostInitSimVar(ctx, service_id, pData);
-        service.handleUpdateSimVar(ctx, service_id, pData, currAbsTime);
-        service.handleUpdatepDataVar(ctx, service_id, pData);
-        service.handleSimDisconnect(ctx, service_id, pData);
-
+        if(service.handleSimConnect(ctx, service_id, pData)){
+            service.handlePostInstallInitSimVarEnumsIDs(ctx, service_id, pData);
+            service.handlePostInitSimVar(ctx, service_id, pData);
+            service.handleUpdateSimVar(ctx, service_id, pData, currAbsTime);
+            service.handleUpdatepDataVar(ctx, service_id, pData);
+            service.handleSimDisconnect(ctx, service_id, pData);
+        }
     }
-
 }

@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "common_sys.h"
 
+using namespace std;
+
 /*
 * =============== *
 * CLASSES DEFINED *
@@ -350,10 +352,10 @@ private:
     const double IDGCoolingCoeff = 0.4;
 
     void updateGen1(const double currentAbsTime, const double ambient) {
-        if (aSimVarsValue[ENG1_N2] >= 57 && timeElapsedGen1 < stableTime) {
+        if (aSimVarsValue[ENG1_N2] >= 59.5 && timeElapsedGen1 < stableTime) {
             timeElapsedGen1 += (currentAbsTime - lastAbsTime) / 1000;
         }
-        else if (aSimVarsValue[ENG1_N2] <= 52 && timeElapsedGen1 > 0) {
+        else if (aSimVarsValue[ENG1_N2] <= 56 && timeElapsedGen1 > 0) {
             timeElapsedGen1 -= (currentAbsTime - lastAbsTime) / 1000;
         }
 
