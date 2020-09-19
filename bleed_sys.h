@@ -3,7 +3,7 @@
 
 using namespace std;
 
-class packsSys {
+class BleedSys {
 private:
     EngineBleed engUnit;
     APUBleed apuUnit;

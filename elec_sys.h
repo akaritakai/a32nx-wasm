@@ -26,13 +26,13 @@ using namespace std;
 * 
 */
 
-class elecSys {
+class ElecSys {
 private:
     Batteries battUnit;
-    EXTPWR gpuUnit;
-    APUGEN apuUnit;
-    Engine engUnit;
-    RAT    emerUnit;
+    EXTGen gpuUnit;
+    APUGen apuUnit;
+    EngineGen engUnit;
+    RATGen emerUnit;
     Buses  busUnit;
     Convertors convertorUnit;
 public:
@@ -177,7 +177,7 @@ public:
 * EXTPWR/GPU *
 * ========== *
 */
-class EXTPWR {
+class EXTGen {
 public:
     void init() {
         lSimVarsValue[EXT_GEN_VOLTAGE] = 0;
@@ -211,7 +211,7 @@ public:
 * ======= *
 * ==================TODO: separate APU start sequence into a new engine module.=======================
 */
-class APUGEN {
+class APUGen {
 private:
     const int apu_flap_delay = 3 + rand() % 14;
     const int bleed_pressure_drop = 2 + rand() % 2;
@@ -343,7 +343,7 @@ public:
 * =========== *
 */
 
-class Engine {
+class EngineGen {
 private:
     const double stableTime = 0.5;
     double timeElapsedGen1;
@@ -448,7 +448,7 @@ public:
 * ======== *
 * ============================TODO: separate RAT start sequence to engine module?======================
 */
-class RAT {
+class RATGen {
 private:
     const int RATdelay = 8; //8sec
     int timeElapsed = 0;

@@ -3,7 +3,7 @@
 
 using namespace std;
 
-class packsSys {
+class PacksSys {
 private:
     Packs packsUnit;
     Cabin cabinUnit;

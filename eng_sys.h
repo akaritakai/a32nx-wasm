@@ -3,7 +3,7 @@
 
 using namespace std;
 
-class engSys {
+class EngSys {
     private:
         Engine eng1;
         Engine eng2;
