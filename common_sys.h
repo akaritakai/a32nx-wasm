@@ -175,6 +175,14 @@ typedef enum lSimVars {
     STATICINV_FREQ,         //"L:STATICINV_FREQ","Hertz"
 
     /*
+    * =========== * 
+    * AC/DC Power *
+    * =========== *
+    */
+    AC_POWER_AVAIL,         //"L:ACPowerAvailable, Bool"
+    DC_POWER_AVAIL,         //"L:DCPowerAvailable, Bool"
+
+    /*
     * ========== *
     * XML L VARS *
     * ========== *
@@ -400,6 +408,8 @@ extern const PCSTRINGZ pcstring_lSimVars[totalLVarsCount] = {   //==============
                                                                 "STATIC_INV",
                                                                 "STATIC_INV_VOLTAGE",
                                                                 "STATIC_INV_FREQ",
+                                                                "ACPowerAvailable",
+                                                                "DCPowerAvailable",
                                                                 "A32NX_APU_START_ACTIVATED",
                                                                 "A32NX_ELEC_IDG1_FAULT",
                                                                 "A32NX_ELEC_IDG1_TOGGLE",
