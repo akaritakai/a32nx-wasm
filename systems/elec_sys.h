@@ -572,13 +572,13 @@ private:
         return NOPOWER;
     }
     ENUM updateHOTBUS1() {
-        if (lSimVarsValue[BATT1_ONLINE]) {
+        if (lSimVarsValue[BATT1_CAPACITY] > 0) {
             return BATT1;
         }
         return NOPOWER;
     }
     ENUM updateHOTBUS2() {
-        if (lSimVarsValue[BATT2_ONLINE]) {
+        if (lSimVarsValue[BATT2_CAPACITY] > 0) {
             return BATT2;
         }
         return NOPOWER;
