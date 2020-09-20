@@ -14,6 +14,6 @@ Core systems implementation for flybywire_A32NX as wasm module.
   - Ensure to provide a comment of local var name to be used while defining its enum(yes, one may scroll down to PCSTRINGZ array and lookup,
     but this makes things easier for others to work with.)
     
-- Thread support is currently unavailable so expect sync delay issues with update function(worst case should be no more than one cycle update desync).
+- Thread support is currently unavailable so expect sync delay issues with update function(worst case should be no more than one update desync).
 - Once thread support is available all the functions can then run async.
     
