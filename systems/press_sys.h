@@ -1,7 +1,6 @@
 #pragma once
 #include "../common_sys.h"
 
-using namespace std;
 
 class PressSys {
 private:

@@ -1,8 +1,6 @@
 ﻿#pragma once
 #include "../common_sys.h"
 
-using namespace std;
-
 /*
 * =============== *
 * CLASSES DEFINED *
