@@ -12,5 +12,8 @@ Core systems implementation for flybywire_A32NX as wasm module.
 - `#include "common_sys.h"` in your header file. Use and update enum definition and PCSTRINGZ definition in common_sys.h as required(do not delete/change order of any existing ones)
   - In order to add new ones, first add its enum to the enum definitions and follow suit with its string at the same index as enum definition
   - Ensure to provide a comment of local var name to be used while defining its enum(yes, one may scroll down to PCSTRINGZ array and lookup,
-    but this makes things easier for others to work with.
+    but this makes things easier for others to work with.)
+    
+- Thread support is currently unavailable so expect sync delay issues with update function.
+- Once thread support is available all the functions can then run async.
     
