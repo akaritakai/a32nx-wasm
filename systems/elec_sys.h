@@ -560,7 +560,7 @@ private:
         return NOPOWER;
     }
     ENUM updateACSHED() {
-        if (lSimVarsValue[AC_ESS] && lSimVarsValue[AC_ESS] != EMER) {
+        if (lSimVarsValue[AC_ESS] && lSimVarsValue[AC_ESS] != EMER || lSimVarsValue[AC_ESS] != STATINV) {
             return lSimVarsValue[AC_ESS];
         }
         return NOPOWER;
@@ -632,7 +632,7 @@ private:
         return NOPOWER;
     }
     ENUM updateDCSHED() {
-        if (lSimVarsValue[DC_ESS]) {
+        if (lSimVarsValue[DC_ESS] && lSimVarsValue[DC_ESS] != HOT_BUS2) {
             return lSimVarsValue[DC_ESS];
         }
         return NOPOWER;
