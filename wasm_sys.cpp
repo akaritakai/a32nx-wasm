@@ -1,10 +1,12 @@
-﻿#include "elec_sys.h"
-#include "packs_sys.h"
-#include "bleed_sys.h"
-#include "press_sys.h"
-#include "eng_sys.h"
+﻿#include "systems/elec_sys.h"
+#include "systems/packs_sys.h"
+#include "systems/bleed_sys.h"
+#include "systems/press_sys.h"
+#include "systems/eng_sys.h"
+
 
 #include <SimConnect.h>
+using namespace std;
 
 ElecSys ELEC_SYSTEM;
 PacksSys PACK_SYSTEM;
