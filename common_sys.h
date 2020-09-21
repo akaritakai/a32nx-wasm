@@ -11,6 +11,9 @@
 #include <time.h>
 #include <vector>
 
+
+#define REFRESH_RATE 500        //update refresh rate in milliseconds
+
 void initUnitEnums();
 void initLocalSimVarsIDs();
 void updateLocalSimVars();
@@ -56,6 +59,7 @@ typedef enum aSimVars {
 
 typedef enum keyEventTrigger {
     APU_START_TRIGGER,              //KEY_APU_STARTER
+
     keyEventTriggerCount
 }keyEventTrigger;
 
@@ -100,13 +104,6 @@ typedef enum lSimVars {
     APU_GEN_AMPERAGE,       //"L:APU_GEN_AMPERAGE","Amperes"
     APU_GEN_FREQ,           //"L:APU_GEN_FREQ","Hertz"
     APU_LOAD_PERCENT,       //"L:APU_LOAD_PERCENT","percent"
-    /***
-    The following will be shifted out of ELEC shortly
-    ***/
-    APU_FLAP_OPEN,          //"L:APU_FLAP_OPEN", "Percent"
-    APU_N1,                 //"L:APU_N1","Percent"
-    APU_EGT,                //"L:APU_EGT","celcius"
-    APU_EGT_WARN,           //"L:APU_EGT_WARN","celcius"
 
     /*
     * =========== *
@@ -270,8 +267,13 @@ typedef enum lSimVars {
     PACK_FLOW_CONTROLLER,   //TODO
 
 /*==============================================================================================================================================================================*/
-/*                                                                                   PRESSS                                                                                     */
+/*                                                                                   ENGINES                                                                                    */
 /*==============================================================================================================================================================================*/
+
+    APU_FLAP_OPEN,          //"L:APU_FLAP_OPEN", "Percent"
+    APU_N1,                 //"L:APU_N1","Percent"
+    APU_EGT,                //"L:APU_EGT","celcius"
+    APU_EGT_WARN,           //"L:APU_EGT_WARN","celcius"
 
     totalLVarsCount
 }lSimVars;
@@ -313,16 +315,16 @@ typedef enum ElECConf {
 /*pcstring_<type> holds string inputs required by simconnect function
 Ensure that their indices match their corresponding enum definitions.*/
 
-const char* pcstring_units[enumUnitsCount] = {	"Bool",
+const PCSTRINGZ pcstring_units[enumUnitsCount] = {	        "Bool",
                                                             "Percent",
                                                             "Volts",
                                                             "Hertz",
                                                             "PSI",
                                                             "Number",
                                                             "Enum"
-                                                        };
+                                                };
 
-const char* pcstring_aSimVars[aSimVarsCount] = { "EXTERNAL POWER AVAILABLE, Bool",
+const PCSTRINGZ pcstring_aSimVars[aSimVarsCount] = {        "EXTERNAL POWER AVAILABLE, Bool",
                                                             "EXTERNAL POWER ON, Bool",
                                                             "FUELSYSTEM VALVE SWITCH : 8, Bool",
                                                             "APU PCT RPM, Percent",
@@ -341,9 +343,9 @@ const char* pcstring_aSimVars[aSimVarsCount] = { "EXTERNAL POWER AVAILABLE, Bool
                                                             "BLEED AIR APU, Bool",
                                                             "GENERAL ENG STARTER:1, Bool",
                                                             "GENERAL ENG STARTER:2, Bool"
-                                                        };
+                                                };
 
-const char* pcstring_lSimVars[totalLVarsCount] = {   //===============================ELEC======================
+const PCSTRINGZ pcstring_lSimVars[totalLVarsCount] = {   //===============================ELEC======================
                                                                 "BATT1_ONLINE",         
                                                                 "BATT2_ONLINE",
                                                                 "BATT1_CAPACITY",
@@ -352,19 +354,14 @@ const char* pcstring_lSimVars[totalLVarsCount] = {   //=========================
                                                                 "BATT2_VOLTAGE",
                                                                 "BATT1_AMPERAGE",
                                                                 "BATT2_AMPERAGE",
+                                                                "BATT_BUS_LOAD",
                                                                 "EXT_GEN_VOLTAGE",
                                                                 "EXT_GEN_AMPERAGE",
                                                                 "EXT_GEN_FREQ",
-                                                                "APU_FLAP_OPEN",
-                                                                "A32NX_APU_START_ACTIVATED",
-                                                                "APU_N1",
                                                                 "APU_GEN_VOLTAGE",
                                                                 "APU_GEN_AMPERAGE",
                                                                 "APU_GEN_FREQ",
                                                                 "APU_LOAD_PERCENT",
-                                                                "APU_BLEED_PRESSURE",
-                                                                "APU_EGT",
-                                                                "APU_EGT_WARN",
                                                                 "GEN1_ONLINE",
                                                                 "GEN2_ONLINE",
                                                                 "GEN1_VOLTAGE",
@@ -444,12 +441,17 @@ const char* pcstring_lSimVars[totalLVarsCount] = {   //=========================
                                                                 "AFT_TEMP",
                                                                 "A320_Neo_AIRCOND_LVL_1",
                                                                 "A320_Neo_AIRCOND_LVL_2",
-                                                                "A320_Neo_AIRCOND_LVL_3"
+                                                                "A320_Neo_AIRCOND_LVL_3",
                                                                 //TODO
                                                                 //TODO
                                                                 //TODO
                                                                 //TODO
-                                                            };
+                                                                //=============================ENGINES============================
+                                                                "APU_FLAP_OPEN",
+                                                                "APU_N1",
+                                                                "APU_EGT",
+                                                                "APU_EGT_WARN"
+                                                    };
 
 ENUM* ENUM_UNITS;
 ID* ID_LSIMVAR;

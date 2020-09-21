@@ -3,6 +3,7 @@
 #include "systems/bleed_sys.h"
 #include "systems/press_sys.h"
 #include "systems/eng_sys.h"
+
 #include <SimConnect.h>
 #include <ratio>
 #include <chrono>
@@ -45,7 +46,7 @@ public:
             return true;
         }
     }
-
+    /*
     bool handlePostInstallInitSimVarEnumsIDs(FsContext ctx, int service_id, void* pData) {
         switch (service_id)
         {
@@ -89,6 +90,7 @@ public:
             return true;
         }
     }
+    */
 }service;
 
 class WasmSys {
@@ -102,7 +104,7 @@ class WasmSys {
         void init() {
             initUnitEnums();
             initLocalSimVarsIDs();
-            srand(time(NULL));
+            srand(time(nullptr));
             ELEC_SYSTEM.init();
             PACK_SYSTEM.init();
             BLEED_SYSTEM.init();
@@ -116,7 +118,7 @@ class WasmSys {
             PACK_SYSTEM.update();
             BLEED_SYSTEM.update();
             PRESS_SYSTEM.update();
-            ENG_SYSTEM.update();
+            ENG_SYSTEM.update(currentAbsTime);
 
             ELEC_SYSTEM.updateSimVars();
             PACK_SYSTEM.updateSimVars();
@@ -138,7 +140,7 @@ extern "C" {
             bool initialized = 0;
             bool kill = 0;
             struct timeval time;
-            double refreshRate = 500;                               //refresh rate in milliseconds
+            double refreshRate = REFRESH_RATE;                               //refresh rate in milliseconds
             double lastRefresh = 0;
 
             while (!(kill)) {
@@ -167,6 +169,6 @@ extern "C" {
                 service.handleSimDisconnect(ctx, service_id, pData);
             */
         }
-        return 0;
+        return true;
     }
 }
