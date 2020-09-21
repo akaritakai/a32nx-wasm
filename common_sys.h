@@ -462,7 +462,7 @@ extern ENUM* keyEventID;
 
 
 extern double lastAbsTime = 0;	//last time the update function was run
-extern double currAbsTime = 0;
+
 extern FLOAT64 aSimVarsValue[aSimVarsCount];
 extern FLOAT64 lSimVarsValue[totalLVarsCount];
 extern std::vector<int> dirtylSimVars;

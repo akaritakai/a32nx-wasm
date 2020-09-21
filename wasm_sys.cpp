@@ -3,17 +3,10 @@
 #include "systems/bleed_sys.h"
 #include "systems/press_sys.h"
 #include "systems/eng_sys.h"
-
-
 #include <SimConnect.h>
-using namespace std;
-
-ElecSys ELEC_SYSTEM;
-PacksSys PACK_SYSTEM;
-BleedSys BLEED_SYSTEM;
-PressSys PRESS_SYSTEM;
-EngSys ENG_SYSTEM;
-
+#include <ratio>
+#include <chrono>
+#include <sys/time.h>
 
 HANDLE hSimConnect = NULL;
 class ServiceDef {
@@ -57,9 +50,6 @@ public:
         switch (service_id)
         {
         case PANEL_SERVICE_POST_INSTALL: {
-            initUnitEnums();
-            initLocalSimVarsIDs();
-            srand(time(NULL));
             return true;
         }
         default:
@@ -71,11 +61,6 @@ public:
         switch (service_id)
         {
         case PANEL_SERVICE_POST_INITIALIZE: {
-            ELEC_SYSTEM.init();
-            PACK_SYSTEM.init();
-            BLEED_SYSTEM.init();
-            PRESS_SYSTEM.init();
-            ENG_SYSTEM.init();
             return true;
         }
         default:
@@ -87,6 +72,44 @@ public:
         switch (service_id)
         {
         case PANEL_SERVICE_PRE_UPDATE: {
+            return true;
+        }
+        default:
+            return true;
+        }
+    }
+
+    bool handleUpdatepDataVar(FsContext ctx, int service_id, void* pData) {
+        switch (service_id)
+        {
+        case PANEL_SERVICE_PRE_DRAW: {
+            return true;
+        }
+        default:
+            return true;
+        }
+    }
+}service;
+
+class WasmSys {
+    private:
+        ElecSys ELEC_SYSTEM;
+        PacksSys PACK_SYSTEM;
+        BleedSys BLEED_SYSTEM;
+        PressSys PRESS_SYSTEM;
+        EngSys ENG_SYSTEM;
+    public:
+        void init() {
+            initUnitEnums();
+            initLocalSimVarsIDs();
+            srand(time(NULL));
+            ELEC_SYSTEM.init();
+            PACK_SYSTEM.init();
+            BLEED_SYSTEM.init();
+            PRESS_SYSTEM.init();
+            ENG_SYSTEM.init();
+        }
+        void update(double const currentAbsTime) {
             updateASimVars();
 
             ELEC_SYSTEM.update(currentAbsTime);
@@ -102,30 +125,8 @@ public:
             ENG_SYSTEM.updateSimVars();
 
             lastAbsTime = currentAbsTime;
-            return true;
         }
-        default:
-            return true;
-        }
-    }
-
-    bool handleUpdatepDataVar(FsContext ctx, int service_id, void* pData) {
-        switch (service_id)
-        {
-        case PANEL_SERVICE_PRE_DRAW: {
-            sGaugeDrawData* pData_raw = static_cast<sGaugeDrawData*>(pData);
-            currAbsTime = pData_raw->t;
-            if (lastAbsTime == 0) {
-                lastAbsTime = currAbsTime;
-            }
-            return true;
-        }
-        default:
-            return true;
-        }
-    }
-}service;
-
+}WASM_SYS;
 
 // Callbacks
 extern "C" {
@@ -133,11 +134,38 @@ extern "C" {
     MSFS_CALLBACK bool wasm_sys_callback(FsContext ctx, int service_id, void* pData)
     {
         if(service.handleSimConnect(ctx, service_id, pData)){
-            service.handlePostInstallInitSimVarEnumsIDs(ctx, service_id, pData);
-            service.handlePostInitSimVar(ctx, service_id, pData);
-            service.handleUpdateSimVar(ctx, service_id, pData, currAbsTime);
-            service.handleUpdatepDataVar(ctx, service_id, pData);
-            service.handleSimDisconnect(ctx, service_id, pData);
+            
+            bool initialized = 0;
+            bool kill = 0;
+            struct timeval time;
+            double refreshRate = 500;                               //refresh rate in milliseconds
+            double lastRefresh = 0;
+
+            while (!(kill)) {
+                gettimeofday(&time, 0);
+                double currentAbsTime = time.tv_usec * 1000;
+                
+                if (!(initialized)) {
+                    WASM_SYS.init();
+                    initialized = 1;
+                } else {
+                    if (lastAbsTime == 0) {
+                        lastAbsTime = currentAbsTime;
+                    }
+                    lastRefresh = currentAbsTime - lastAbsTime;
+                    if (lastRefresh >= refreshRate) {
+                        WASM_SYS.update(currentAbsTime);
+                    }
+                }
+                //TODO:: implement KILL trigger
+            }
+            /*
+                service.handlePostInstallInitSimVarEnumsIDs(ctx, service_id, pData);
+                service.handlePostInitSimVar(ctx, service_id, pData);
+                service.handleUpdateSimVar(ctx, service_id, pData, currAbsTime);
+                service.handleUpdatepDataVar(ctx, service_id, pData);
+                service.handleSimDisconnect(ctx, service_id, pData);
+            */
         }
     }
 }
