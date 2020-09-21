@@ -16,52 +16,6 @@
 * 
 */
 
-/*
-* 
-* ================= *
-* ELEC MASTER CLASS *
-* ================= *
-* 
-*/
-
-class ElecSys {
-private:
-    Batteries battUnit;
-    EXTGen gpuUnit;
-    APUGen apuUnit;
-    EngineGen engUnit;
-    RATGen emerUnit;
-    Buses  busUnit;
-    Convertors convertorUnit;
-public:
-    void init() {
-        battUnit.init();
-        gpuUnit.init();
-        apuUnit.init();
-        engUnit.init();
-        emerUnit.init();
-        busUnit.init();
-        convertorUnit.init();
-    }
-    void update(const double currentAbsTime) {
-        battUnit.update(currentAbsTime);
-        gpuUnit.update(currentAbsTime);
-        apuUnit.update(currentAbsTime);
-        engUnit.update(currentAbsTime);
-        emerUnit.update(currentAbsTime);
-        busUnit.update(currentAbsTime);
-        convertorUnit.update(currentAbsTime);
-    }
-    void updateSimVars() {
-        battUnit.updateSimVars();
-        gpuUnit.updateSimVars();
-        apuUnit.updateSimVars();
-        engUnit.updateSimVars();
-        emerUnit.updateSimVars();
-        busUnit.updateSimVars();
-        convertorUnit.updateSimVars();
-    }
-};
 
 /*
 * ========= *
@@ -558,7 +512,7 @@ private:
         return NOPOWER;
     }
     ENUM updateACSHED() {
-        if (lSimVarsValue[AC_ESS] && lSimVarsValue[AC_ESS] != EMER || lSimVarsValue[AC_ESS] != STATINV) {
+        if ((lSimVarsValue[AC_ESS] && lSimVarsValue[AC_ESS] != EMER) || lSimVarsValue[AC_ESS] != STATINV) {
             return lSimVarsValue[AC_ESS];
         }
         return NOPOWER;
@@ -702,7 +656,7 @@ private:
         }
     }
     void updateSTATINV() {
-        if (!(ACPowerState() && aSimVarsValue[TAS] > 0 || lSimVarsValue[STATICINV_ONLINE]) && lSimVarsValue[HOT_BUS1]) {
+        if ((!(ACPowerState() && aSimVarsValue[TAS] > 0) || lSimVarsValue[STATICINV_ONLINE]) && lSimVarsValue[HOT_BUS1]) {
             lSimVarsValue[STATICINV_ONLINE] = 1;
             lSimVarsValue[STATICINV_VOLTAGE] = 115;
             lSimVarsValue[STATICINV_AMPERAGE] = 70 + rand() % 5;
@@ -753,6 +707,52 @@ public:
     }
 };
 
+/*
+*
+* ================= *
+* ELEC MASTER CLASS *
+* ================= *
+*
+*/
+
+class ElecSys {
+private:
+    Batteries battUnit;
+    EXTGen gpuUnit;
+    APUGen apuUnit;
+    EngineGen engUnit;
+    RATGen emerUnit;
+    Buses  busUnit;
+    Convertors convertorUnit;
+public:
+    void init() {
+        battUnit.init();
+        gpuUnit.init();
+        apuUnit.init();
+        engUnit.init();
+        emerUnit.init();
+        busUnit.init();
+        convertorUnit.init();
+    }
+    void update(const double currentAbsTime) {
+        battUnit.update(currentAbsTime);
+        gpuUnit.update(currentAbsTime);
+        apuUnit.update(currentAbsTime);
+        engUnit.update(currentAbsTime);
+        emerUnit.update(currentAbsTime);
+        busUnit.update(currentAbsTime);
+        convertorUnit.update(currentAbsTime);
+    }
+    void updateSimVars() {
+        battUnit.updateSimVars();
+        gpuUnit.updateSimVars();
+        apuUnit.updateSimVars();
+        engUnit.updateSimVars();
+        emerUnit.updateSimVars();
+        busUnit.updateSimVars();
+        convertorUnit.updateSimVars();
+    }
+};
 //TODO
 void updateELECConf() {
 

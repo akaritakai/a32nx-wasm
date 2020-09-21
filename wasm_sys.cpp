@@ -8,7 +8,7 @@
 #include <chrono>
 #include <sys/time.h>
 
-HANDLE hSimConnect = NULL;
+HANDLE hSimConnect = 0;
 class ServiceDef {
 private:
 public:
@@ -167,5 +167,6 @@ extern "C" {
                 service.handleSimDisconnect(ctx, service_id, pData);
             */
         }
+        return 0;
     }
 }

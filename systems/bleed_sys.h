@@ -1,39 +1,6 @@
 #pragma once
 #include "../common_sys.h"
 
-
-class BleedSys {
-private:
-    EngineBleed engUnit;
-    APUBleed apuUnit;
-    GPUBleed gpuUnit;
-    RATAir ratUnit;
-    Valves valveUnit;
-public:
-    void init() {
-        engUnit.init();
-        apuUnit.init();
-        gpuUnit.init();
-        ratUnit.init();
-        valveUnit.init();
-    }
-    void update() {
-        engUnit.update();
-        apuUnit.update();
-        gpuUnit.update();
-        ratUnit.update();
-        valveUnit.update();
-
-    }
-    void updateSimVars() {
-        engUnit.updateSimVars();
-        apuUnit.updateSimVars();
-        gpuUnit.updateSimVars();
-        ratUnit.updateSimVars();
-        valveUnit.updateSimVars();
-    }
-};
-
 class EngineBleed {
 private:
 public:
@@ -101,5 +68,36 @@ public:
     }
     void updateSimVars() {
 
+    }
+};
+class BleedSys {
+private:
+    EngineBleed engUnit;
+    APUBleed apuUnit;
+    GPUBleed gpuUnit;
+    RATAir ratUnit;
+    Valves valveUnit;
+public:
+    void init() {
+        engUnit.init();
+        apuUnit.init();
+        gpuUnit.init();
+        ratUnit.init();
+        valveUnit.init();
+    }
+    void update() {
+        engUnit.update();
+        apuUnit.update();
+        gpuUnit.update();
+        ratUnit.update();
+        valveUnit.update();
+
+    }
+    void updateSimVars() {
+        engUnit.updateSimVars();
+        apuUnit.updateSimVars();
+        gpuUnit.updateSimVars();
+        ratUnit.updateSimVars();
+        valveUnit.updateSimVars();
     }
 };

@@ -1,29 +1,6 @@
 #pragma once
 #include "../common_sys.h"
 
-class EngSys {
-    private:
-        Engine eng1;
-        Engine eng2;
-        APUEngine apuEng;
-    public:
-    void init() {
-        eng1.init();
-        eng2.init();
-        apuEng.init();
-    }
-    void update() {
-        eng1.update();
-        eng2.update();
-        apuEng.update();
-    }
-    void updateSimVars() {
-        eng1.updateSimVars();
-        eng2.updateSimVars();
-        apuEng.updateSimVars();
-    }
-};
-
 class Engine {
 private:
 public:
@@ -49,5 +26,28 @@ public:
     }
     void updateSimVars() {
 
+    }
+};
+
+class EngSys {
+    private:
+        Engine eng1;
+        Engine eng2;
+        APUEngine apuEng;
+    public:
+    void init() {
+        eng1.init();
+        eng2.init();
+        apuEng.init();
+    }
+    void update() {
+        eng1.update();
+        eng2.update();
+        apuEng.update();
+    }
+    void updateSimVars() {
+        eng1.updateSimVars();
+        eng2.updateSimVars();
+        apuEng.updateSimVars();
     }
 };

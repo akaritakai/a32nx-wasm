@@ -11,12 +11,9 @@
 #include <time.h>
 #include <vector>
 
-#define NULL 0
-
 void initUnitEnums();
 void initLocalSimVarsIDs();
 void updateLocalSimVars();
-
 
 typedef enum unitsEnum {
     bool_units,
@@ -36,10 +33,10 @@ typedef enum aSimVars {
     EXT_AVAIL,              //"EXTERNAL POWER AVAILABLE","Bool"
     EXT_POWER,              //"EXTERNAL POWER ON", "Bool"
     FUEL_VALUE_8,           //"FUELSYSTEM VALVE SWITCH:8", "Bool"
-    APU_PCT_RPM,            //"APU PCT RPM", "percent"
+    APU_RPM,                //"APU PCT RPM", "percent"
     ENG1_N2,                //"ENG N2 RPM:1","percent"
     ENG2_N2,                //"ENG N2 RPM:2","percent"
-    APU_SWITCH,             //"A:APU SWITCH", "Bool"
+    APU_START_SWITCH,       //"A:APU SWITCH", "Bool"
     BATT1_SW,               //A:ELECTRICAL MASTER BATTERY:#ID#, Bool
     BATT2_SW,               //A:ELECTRICAL MASTER BATTERY:#ID#, Bool
     AMB_TEMP,               //"AMBIENT TEMPERATURE", "celsius"
@@ -58,7 +55,7 @@ typedef enum aSimVars {
 
 
 typedef enum keyEventTrigger {
-    APU_START,              //KEY_APU_STARTER
+    APU_START_TRIGGER,              //KEY_APU_STARTER
     keyEventTriggerCount
 }keyEventTrigger;
 
@@ -235,8 +232,6 @@ typedef enum lSimVars {
     * ========== *
     */
     X_BLEED,            //TODO
-    PACK1_VALVE,        //TODO
-    PACK2_VALVE,        //TODO
 
 /*==============================================================================================================================================================================*/
 /*                                                                                    PACKS                                                                                     */
@@ -318,7 +313,7 @@ typedef enum ElECConf {
 /*pcstring_<type> holds string inputs required by simconnect function
 Ensure that their indices match their corresponding enum definitions.*/
 
-extern const PCSTRINGZ pcstring_units[enumUnitsCount] = {	"Bool",
+const char* pcstring_units[enumUnitsCount] = {	"Bool",
                                                             "Percent",
                                                             "Volts",
                                                             "Hertz",
@@ -327,7 +322,7 @@ extern const PCSTRINGZ pcstring_units[enumUnitsCount] = {	"Bool",
                                                             "Enum"
                                                         };
 
-extern const PCSTRINGZ pcstring_aSimVars[aSimVarsCount] = { "EXTERNAL POWER AVAILABLE, Bool",
+const char* pcstring_aSimVars[aSimVarsCount] = { "EXTERNAL POWER AVAILABLE, Bool",
                                                             "EXTERNAL POWER ON, Bool",
                                                             "FUELSYSTEM VALVE SWITCH : 8, Bool",
                                                             "APU PCT RPM, Percent",
@@ -345,10 +340,10 @@ extern const PCSTRINGZ pcstring_aSimVars[aSimVarsCount] = { "EXTERNAL POWER AVAI
                                                             "BLEED AIR ENGINE : 2, Bool"
                                                             "BLEED AIR APU, Bool",
                                                             "GENERAL ENG STARTER:1, Bool",
-                                                            "GENERAL ENG STARTER:2, Bool",
+                                                            "GENERAL ENG STARTER:2, Bool"
                                                         };
 
-extern const PCSTRINGZ pcstring_lSimVars[totalLVarsCount] = {   //===============================ELEC======================
+const char* pcstring_lSimVars[totalLVarsCount] = {   //===============================ELEC======================
                                                                 "BATT1_ONLINE",         
                                                                 "BATT2_ONLINE",
                                                                 "BATT1_CAPACITY",
@@ -456,16 +451,16 @@ extern const PCSTRINGZ pcstring_lSimVars[totalLVarsCount] = {   //==============
                                                                 //TODO
                                                             };
 
-extern ENUM* ENUM_UNITS;
-extern ID* ID_LSIMVAR;
-extern ENUM* keyEventID;
+ENUM* ENUM_UNITS;
+ID* ID_LSIMVAR;
+ENUM* keyEventID;
 
 
-extern double lastAbsTime = 0;	//last time the update function was run
+double lastAbsTime = 0;	//last time the update function was run
 
-extern FLOAT64 aSimVarsValue[aSimVarsCount];
-extern FLOAT64 lSimVarsValue[totalLVarsCount];
-extern std::vector<int> dirtylSimVars;
+FLOAT64 aSimVarsValue[aSimVarsCount];
+FLOAT64 lSimVarsValue[totalLVarsCount];
+std::vector<int> dirtylSimVars;
 
 
 void initUnitEnums() {
