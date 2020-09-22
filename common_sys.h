@@ -134,7 +134,7 @@ typedef enum lSimVars {
     /*
     * ===== *
     * BUSES *
-    * ===== *               //PRIORITY                  0               1               2               3               4
+    * ===== *               //PRIORITY                  0               1               2               3               4                   5
     */
     AC_BUS1,                //"L:AC_BUS1","Enum"        0 = No power,   1 = gen1,       3 = ext,        4 = apu,        2 = gen 2
     AC_BUS2,                //"L:AC_BUS2","Enum"        0 = No power,   2 = gen2,       3 = ext,        4 = apu,        1 = gen 2
@@ -143,7 +143,7 @@ typedef enum lSimVars {
     GALLEY_SHED,            //"L:GALLEY_SHED","Enum"    0 = No power,   AC_SHED
     DC_BUS1,                //"L:DC_BUS1","Enum"        0 = No power,   7 = TR1,        8 = TR2
     DC_BUS2,                //"L:DC_BUS2","Enum"        0 = No power,   8 = TR2,        7 = TR1
-    DC_BAT,                 //"L:DC_BATBUS","Enum"      0 = No power,   DC_BUS1,        DC_BUS2
+    DC_BAT,                 //"L:DC_BATBUS","Enum"      0 = No power,   DC_BUS1,        DC_BUS2,        12 = BATT12,    10 = BATT1,         11 = BATT2
     DC_ESS,                 //"L:DC_ESS","Enum"         0 = No power,   DC_BAT,         9 = TRESS
     DC_SHED,                //"L:DC_SHED","Enum"        0 = No power,   DC_ESS
     HOT_BUS1,               //"L:HOT_BUS1","Enum"       0 = No power,   10 = BATT1

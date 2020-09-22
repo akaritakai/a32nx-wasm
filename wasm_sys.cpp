@@ -9,90 +9,6 @@
 #include <chrono>
 #include <sys/time.h>
 
-HANDLE hSimConnect = 0;
-class ServiceDef {
-private:
-public:
-    bool handleSimConnect(FsContext ctx, int service_id, void* pData) {
-        switch (service_id)
-        {
-        case PANEL_SERVICE_PRE_INSTALL: {
-            HRESULT hr = SimConnect_Open(&hSimConnect, "A32NX_wasm_sys", nullptr, 0, 0, 0);
-            if (hr) {
-                return true;
-            }
-            return false;
-        }
-        default:
-            return true;
-        }
-    }
-
-    bool handleSimDisconnect(FsContext ctx, int service_id, void* pData) {
-        switch (service_id)
-        {
-        case PANEL_SERVICE_PRE_KILL: {
-            unregister_all_named_vars();
-            free(ENUM_UNITS);
-            free(ID_LSIMVAR);
-
-            HRESULT hr = SimConnect_Close(hSimConnect);
-            if (hr) {
-                return true;
-            }
-            return false;
-        }
-        default:
-            return true;
-        }
-    }
-    /*
-    bool handlePostInstallInitSimVarEnumsIDs(FsContext ctx, int service_id, void* pData) {
-        switch (service_id)
-        {
-        case PANEL_SERVICE_POST_INSTALL: {
-            return true;
-        }
-        default:
-            return true;
-        }
-    }
-
-    bool handlePostInitSimVar(FsContext ctx, int service_id, void* pData) {
-        switch (service_id)
-        {
-        case PANEL_SERVICE_POST_INITIALIZE: {
-            return true;
-        }
-        default:
-            return true;
-        }
-    }
-
-    bool handleUpdateSimVar(FsContext ctx, int service_id, void* pData, const double currentAbsTime) {
-        switch (service_id)
-        {
-        case PANEL_SERVICE_PRE_UPDATE: {
-            return true;
-        }
-        default:
-            return true;
-        }
-    }
-
-    bool handleUpdatepDataVar(FsContext ctx, int service_id, void* pData) {
-        switch (service_id)
-        {
-        case PANEL_SERVICE_PRE_DRAW: {
-            return true;
-        }
-        default:
-            return true;
-        }
-    }
-    */
-}service;
-
 class WasmSys {
     private:
         ElecSys ELEC_SYSTEM;
@@ -128,7 +44,49 @@ class WasmSys {
 
             lastAbsTime = currentAbsTime;
         }
+        void destroy() {
+            unregister_all_named_vars();
+            free(ENUM_UNITS);
+            free(ID_LSIMVAR);
+        }
 }WASM_SYS;
+
+class ServiceDef {
+private:
+    HANDLE hSimConnect = 0;
+    const char* stopState = "SimStop";
+    SIMCONNECT_DATA_REQUEST_ID  RequestID;
+public:
+    bool handleSimConnect(FsContext ctx, int service_id, void* pData) {
+        switch (service_id)
+        {
+        case PANEL_SERVICE_PRE_INSTALL: {
+            HRESULT hr = SimConnect_Open(&hSimConnect, "A32NX_wasm_sys", nullptr, 0, 0, 0);
+            if (hr) {
+                return true;
+            }
+            return false;
+        }
+        default:
+            return true;
+        }
+    }
+    bool simStopCheck() {
+        HRESULT kill = SimConnect_RequestSystemState(hSimConnect, RequestID, stopState);
+        if (kill) {
+            return kill;
+        }
+        return 0;
+    }
+    bool handleSimDisconnect() {
+        WASM_SYS.destroy();
+        HRESULT hr = SimConnect_Close(hSimConnect);
+        if (hr) {
+            return true;
+        }
+        return false;
+    }
+}service;
 
 // Callbacks
 extern "C" {
@@ -138,9 +96,8 @@ extern "C" {
         if(service.handleSimConnect(ctx, service_id, pData)){
             
             bool initialized = 0;
-            bool kill = 0;
+            HRESULT kill = 0;
             struct timeval time;
-            double refreshRate = REFRESH_RATE;                               //refresh rate in milliseconds
             double lastRefresh = 0;
 
             while (!(kill)) {
@@ -155,19 +112,15 @@ extern "C" {
                         lastAbsTime = currentAbsTime;
                     }
                     lastRefresh = currentAbsTime - lastAbsTime;
-                    if (lastRefresh >= refreshRate) {
+                    if (lastRefresh >= REFRESH_RATE) {
                         WASM_SYS.update(currentAbsTime);
                     }
                 }
-                //TODO:: implement KILL trigger
+                kill = service.simStopCheck();
+                if (kill) {
+                    service.handleSimDisconnect();
+                }
             }
-            /*
-                service.handlePostInstallInitSimVarEnumsIDs(ctx, service_id, pData);
-                service.handlePostInitSimVar(ctx, service_id, pData);
-                service.handleUpdateSimVar(ctx, service_id, pData, currAbsTime);
-                service.handleUpdatepDataVar(ctx, service_id, pData);
-                service.handleSimDisconnect(ctx, service_id, pData);
-            */
         }
         return true;
     }
