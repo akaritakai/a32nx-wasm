@@ -62,7 +62,7 @@ public:
         {
         case PANEL_SERVICE_PRE_INSTALL: {
             HRESULT hr = SimConnect_Open(&hSimConnect, "A32NX_wasm_sys", nullptr, 0, 0, 0);
-            if (hr) {
+            if (SUCCEEDED(hr)) {
                 return true;
             }
             return false;
@@ -73,7 +73,7 @@ public:
     }
     bool simStopCheck() {
         HRESULT kill = SimConnect_RequestSystemState(hSimConnect, RequestID, stopState);
-        if (kill) {
+        if (SUCCEEDED(kill)) {
             return kill;
         }
         return 0;
@@ -81,7 +81,7 @@ public:
     bool handleSimDisconnect() {
         WASM_SYS.destroy();
         HRESULT hr = SimConnect_Close(hSimConnect);
-        if (hr) {
+        if (SUCCEEDED(hr)) {
             return true;
         }
         return false;
@@ -96,7 +96,7 @@ extern "C" {
         if(service.handleSimConnect(ctx, service_id, pData)){
             
             bool initialized = 0;
-            HRESULT kill = 0;
+            bool kill = 0;
             struct timeval time;
             double lastRefresh = 0;
 
