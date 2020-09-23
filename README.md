@@ -1,5 +1,8 @@
-# FBW_A32NX_WASM_SYSTEM
+# A32NX_WASM_SYSTEM
 Core systems implementation for flybywire_A32NX as wasm module.
+
+## Documentation
+- Simconnect documentation and gauge documentation available with the SDK documentation is self sufficient.
 
 ## Steps to add new system
 - Create all your system implementation(as classes) in its own header file with a master class so that you don't flood `wasm_sys.cpp`
